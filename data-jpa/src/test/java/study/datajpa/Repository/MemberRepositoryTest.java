@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.Team;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -18,7 +22,8 @@ import static org.assertj.core.api.Assertions.*;
 class MemberRepositoryTest {
     
     @Autowired MemberRepository memberRepository;
-    
+    @Autowired TeamRepository teamRepository;
+
     @Test
     public void testMember() {
 
@@ -64,6 +69,35 @@ class MemberRepositoryTest {
 //
 //        long deletedcount = memberJpaRepository.count();
 //        assertThat(deletedcount).isEqualTo(0);
+    }
+
+    @Test
+    public void findMemberDto() {
+        //given
+        Team team = new Team("teamA");
+        teamRepository.save(team);
+
+        Member m1 = new Member("AAA", 10);
+        m1.setTeam(team);
+        memberRepository.save(m1);
+
+        List<MemberDto> memberDto = memberRepository.findMemberDto();
+        for (MemberDto dto : memberDto) {
+            System.out.println("dto = " + dto);
+        }
+    }
+
+    @Test
+    public void findByNames() {
+        Member m1 = new Member("AAA");
+        Member m2 = new Member("BBB");
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> byNames = memberRepository.findByNames(Arrays.asList("AAA", "BBB"));
+        for (Member byName : byNames) {
+            System.out.println("byName = " + byName);
+        }
     }
 
 }
