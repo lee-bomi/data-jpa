@@ -26,4 +26,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //파라미터바인딩(콜렉션바인딩)
     @Query("select m from Member m where m.username in :names")
     List<Member> findByNames(@Param("names") List<String> names);
+
+    ss
 }
