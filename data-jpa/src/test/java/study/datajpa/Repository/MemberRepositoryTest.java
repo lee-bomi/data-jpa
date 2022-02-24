@@ -100,4 +100,17 @@ class MemberRepositoryTest {
         }
     }
 
+    @Test
+    public void returnType() {
+        Member m1 = new Member("AAA");
+        Member m2 = new Member("BBB");
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> aaa = memberRepository.findListByUsername("AAA");
+        for (Member member : aaa) {
+            System.out.println("member = " + member);
+        }
+    }
+
 }
