@@ -4,6 +4,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -111,6 +114,32 @@ class MemberRepositoryTest {
         for (Member member : aaa) {
             System.out.println("member = " + member);
         }
+    }
+
+    @Test
+    public void paging() {
+        //given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 10));
+        memberRepository.save(new Member("member3", 10));
+        memberRepository.save(new Member("member4", 10));
+        memberRepository.save(new Member("member5", 10));
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));//0페이지부터시작, 0페이지에서 3개 가져와
+
+        //when
+        Page<Member> page = memberRepository.findByAge(age, pageRequest); //pageRequest는 pageable의 구현체
+        //then
+        List<Member> content = page.getContent();   //실제 내부 컨텐츠를 가져옴(페이지에있는내용)
+        long totalElements = page.getTotalElements();   //개수 출력
+
+        assertThat(content.size()).isEqualTo(3);            //한 페이지당 컨텐츠 수
+        assertThat(page.getTotalElements()).isEqualTo(5);   //전체 컨텐츠수
+        assertThat(page.getNumber()).isEqualTo(0);          //현재 페이지
+        assertThat(page.getTotalPages()).isEqualTo(2);      //전체 페이지
+        assertThat(page.isFirst()).isTrue();        //이게 첫번째 페이지냐?
+        assertThat(page.hasNext()).isTrue();        //다음페이지가 있냐?
     }
 
 }
