@@ -2,7 +2,9 @@ package study.datajpa.Repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
@@ -37,4 +39,15 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findOptionalByUsername(String username);
 
     Page<Member> findByAge(int age, Pageable pageable);
+
+    @Modifying(clearAutomatically = true) //executeUpdate기능(업데이트하면서 그 결과값 리턴하는역할)
+    @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
+    int bulkAgePlus(@Param("age") int age);
+
+    @Query("select m from Member m left join fetch m.team")
+    List<Member> findMemberFetchJoin();
+        //fetch조인을 쓰기위해 항상 JPQL을 써야만 할까? 그냥 메서드이름으로 가져오는걸 못하는걸까
+
+    //JPQL귀차나!
+
 }
