@@ -48,6 +48,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findMemberFetchJoin();
         //fetch조인을 쓰기위해 항상 JPQL을 써야만 할까? 그냥 메서드이름으로 가져오는걸 못하는걸까
 
-    //JPQL귀차나!
+    //JPQL귀차나! (엔티티그래프는 페치조인으로 가져옴 = 성능최적화)
+    @Override
+    @EntityGraph(attributePaths = {"team"})  //member조회하면서 team도 함께 조회하고싶어 근데 jpql은 귀차나
+    List<Member> findAll();
+
+    //이렇게도 가능 jpql + fetchjoin
+    @EntityGraph(attributePaths = {"team"})
+    @Query("select m from Member m")
+    List<Member> findMemberEntityGraph();
 
 }

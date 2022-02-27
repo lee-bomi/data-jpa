@@ -179,8 +179,7 @@ class MemberRepositoryTest {
         List<Member> members = memberRepository.findAll();
 
         for (Member member : members) {
-            System.out.println("member = " + member.getUsername());
-            //N + 1
+            System.out.println("member = " + member.getUsername());//N + 1
             //여기에서 fetch join의 효과가 나타남 -> team의 실제정보를 가져오기위해 프록시가아닌 실제쿼리가 나감
             System.out.println("member.class = " + member.getTeam().getClass());
             System.out.println("member.team = " + member.getTeam().getName());
