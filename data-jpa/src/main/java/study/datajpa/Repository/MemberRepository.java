@@ -2,18 +2,17 @@ package study.datajpa.Repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
 
     List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
@@ -58,4 +57,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m")
     List<Member> findMemberEntityGraph();
 
+    //queryHint(성능최적화를 해서 readonly , 스냅샷을 안찍어둔다)
+    @QueryHints(value = @QueryHint(name="org.hibernate.readOnly", value = "true"))
+    Member findReadOnlyByUsername(String username);
+
+    //남이 건들지못하게 일부 lock을 걸어둘 수 있따
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Member> findLockByUsername(String username);
 }
